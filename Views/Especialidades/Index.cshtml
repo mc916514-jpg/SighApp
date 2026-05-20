@@ -1,0 +1,130 @@
+@model IEnumerable<SighApp.Models.Especialidad>
+@{
+    ViewData["Title"] = "Especialidades Médicas";
+}
+
+<div class="container-fluid animate-fade-in" style="max-width: 900px;">
+    <!-- Header de Módulo -->
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h1 class="h3 fw-bold text-dark mb-1">Especialidades Médicas</h1>
+            <p class="text-muted mb-0">Gestión de áreas de atención clínica y ramas de la medicina disponibles.</p>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Create" class="btn btn-clinical-primary">
+                <i class="bi bi-tag-fill me-2"></i> Crear Especialidad
+            </a>
+        </div>
+    </div>
+
+    <!-- Tabla de Especialidades -->
+    <div class="card-clinical">
+        <div class="card-clinical-header">
+            <h5 class="card-clinical-title">Listado de Áreas y Ramas</h5>
+            <span class="badge bg-primary rounded-pill">@Model.Count() especialidades</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table-clinical">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">ID</th>
+                        <th>Nombre de la Especialidad</th>
+                        <th>Descripción</th>
+                        <th class="text-end" style="width: 150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-5">
+                                <i class="bi bi-tag fs-1 d-block mb-3 text-secondary"></i>
+                                No hay especialidades registradas en el sistema.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row-especialidad-@item.Id">
+                                <td class="fw-bold text-muted">#@item.Id</td>
+                                <td class="fw-semibold text-dark fs-6">@item.Nombre</td>
+                                <td class="text-muted">@(string.IsNullOrWhiteSpace(item.Descripcion) ? "Sin descripción" : item.Descripcion)</td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar Especialidad">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete-especialidad" data-id="@item.Id" data-name="@item.Nombre" title="Eliminar Especialidad">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Eliminación AJAX de especialidad
+            $(document).on('click', '.btn-delete-especialidad', function () {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+
+                Swal.fire({
+                    title: '¿Desea eliminar la especialidad ' + name + '?',
+                    text: "No se podrá eliminar si existen médicos o consultas asociadas a ella.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Especialidades/Delete/' + id,
+                            type: 'POST',
+                            success: function (response) {
+                                if (response.success) {
+                                    $('#row-especialidad-' + id).fadeOut(400, function () {
+                                        $(this).remove();
+                                    });
+
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Especialidad Eliminada',
+                                        text: response.message,
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error de Restricción',
+                                        text: response.message
+                                    });
+                                }
+                            },
+                            error: function () {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error de Red',
+                                    text: 'No se pudo realizar la eliminación de la especialidad.'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

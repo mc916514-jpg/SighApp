@@ -1,0 +1,313 @@
+@model SighApp.Services.DashboardStats
+@{
+    ViewData["Title"] = "Panel de Control Clínico";
+    var weather = ViewBag.Weather as SighApp.Services.WeatherData;
+    var healthTip = ViewBag.HealthTip as string ?? "Mantente hidratado y realiza chequeos preventivos regularmente.";
+}
+
+<div class="container-fluid animate-fade-in">
+    <!-- Header de Bienvenida -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h1 class="h3 fw-bold text-dark mb-1">Panel de Gestión Hospitalaria (SIGH)</h1>
+            <p class="text-muted mb-0">Bienvenido al sistema de administración general de la clínica privada <strong>"Salud Total"</strong>.</p>
+        </div>
+        <div class="date-widget bg-white px-3 py-2 rounded-3 border fw-semibold text-secondary" style="font-size: 0.9rem;">
+            <i class="bi bi-clock-history me-1.5 text-primary"></i>
+            @DateTime.Now.ToString("dd 'de' MMMM, yyyy")
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger rounded-3 border-0 py-3 mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @ViewBag.Error
+        </div>
+    }
+
+    <!-- Fila de Tarjetas Clínicas de Resumen -->
+    <div class="row g-3 mb-4">
+        <!-- Pacientes -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card-clinical border-start-clinical border-primary">
+                <div class="card-clinical-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block small mb-1" style="font-weight: 600;">PACIENTES</span>
+                        <h3 class="fw-bold text-dark mb-0 font-monospace">@Model.TotalPacientes</h3>
+                    </div>
+                    <div class="bg-primary-subtle text-primary rounded-3 p-3 fs-4 d-inline-flex">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Médicos -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card-clinical border-start-clinical border-info">
+                <div class="card-clinical-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block small mb-1" style="font-weight: 600;">MÉDICOS</span>
+                        <h3 class="fw-bold text-dark mb-0 font-monospace">@Model.TotalMedicos</h3>
+                    </div>
+                    <div class="bg-info-subtle text-info rounded-3 p-3 fs-4 d-inline-flex">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Citas Hoy -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card-clinical border-start-clinical border-success">
+                <div class="card-clinical-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block small mb-1" style="font-weight: 600;">CITAS HOY</span>
+                        <h3 class="fw-bold text-dark mb-0 font-monospace">@Model.TotalCitasHoy</h3>
+                    </div>
+                    <div class="bg-success-subtle text-success rounded-3 p-3 fs-4 d-inline-flex">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Citas Pendientes -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card-clinical border-start-clinical border-warning">
+                <div class="card-clinical-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted d-block small mb-1" style="font-weight: 600;">PENDIENTES</span>
+                        <h3 class="fw-bold text-dark mb-0 font-monospace">@Model.TotalCitasPendientes</h3>
+                    </div>
+                    <div class="bg-warning-subtle text-warning rounded-3 p-3 fs-4 d-inline-flex">
+                        <i class="bi bi-calendar-event-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Izquierda: Citas Recientes -->
+        <div class="col-lg-7">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-clinical-title">Agenda Reciente de Atención</h5>
+                    <a asp-controller="Citas" asp-action="Index" class="btn btn-xs btn-outline-primary" style="font-size: 0.8rem;">
+                        Ver toda la agenda
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table-clinical" style="font-size: 0.88rem;">
+                        <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Médico</th>
+                                <th>Horario</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.CitasRecientes.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        No hay citas agendadas recientemente.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var cita in Model.CitasRecientes)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold text-dark">@cita.NombrePaciente</td>
+                                        <td>Dr. @cita.NombreMedico</td>
+                                        <td>@cita.FechaHora.ToString("dd/MM HH:mm")</td>
+                                        <td>
+                                            @if (cita.Estado == "Pendiente")
+                                            {
+                                                <span class="badge-clinical badge-clinical-warning" style="font-size: 0.72rem; padding: 2px 6px;">Pendiente</span>
+                                            }
+                                            else if (cita.Estado == "Realizada")
+                                            {
+                                                <span class="badge-clinical badge-clinical-success" style="font-size: 0.72rem; padding: 2px 6px;">Realizada</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge-clinical badge-clinical-danger" style="font-size: 0.72rem; padding: 2px 6px;">Cancelada</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Derecha: Gráfico de Especialidades -->
+        <div class="col-lg-5">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header">
+                    <h5 class="card-clinical-title">Distribución por Especialidades</h5>
+                </div>
+                <div class="card-clinical-body d-flex flex-column justify-content-center align-items-center py-4">
+                    <div style="width: 100%; max-width: 280px; position: relative;">
+                        <canvas id="especialidadesChart" style="height: 250px; width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila de Widgets (Clima API & Consejo de Salud) -->
+    <div class="row g-4">
+        <!-- Clima API -->
+        <div class="col-md-6">
+            <div class="card-clinical h-100" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);">
+                <div class="card-clinical-header">
+                    <h6 class="card-clinical-title d-flex align-items-center gap-2">
+                        <i class="bi bi-cloud-sun text-primary fs-5"></i>
+                        Condiciones Meteorológicas (Salud Ambiental)
+                    </h6>
+                </div>
+                <div class="card-clinical-body">
+                    @if (weather != null)
+                    {
+                        <div class="d-flex align-items-center gap-4 py-2">
+                            <div class="fs-1 text-primary d-inline-flex bg-primary-subtle p-3 rounded-circle" style="box-shadow: 0 4px 10px rgba(13, 110, 253, 0.1);">
+                                <i class="bi @weather.IconClass"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold text-dark mb-1">@weather.Temperature.ToString("F1") °C</h4>
+                                <span class="badge bg-secondary rounded-pill mb-2">@weather.Condition</span>
+                                <div class="text-muted small">
+                                    <i class="bi bi-wind me-1 text-primary"></i> Viento: @weather.WindSpeed.ToString("F1") km/h | 
+                                    <span class="ms-2">Código OMM: @weather.WeatherCode</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-secondary small mt-3 mb-0 pt-2 border-top">
+                            <i class="bi bi-info-circle-fill text-info me-1"></i>
+                            <strong>Monitoreo Clínico:</strong> El clima y la temperatura inciden directamente en alergias, bronquitis y condiciones respiratorias estacionales.
+                        </p>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-cloud-slash fs-2 d-block mb-2"></i>
+                            No se pudo contactar con el servicio meteorológico de Open-Meteo.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Consejo de Salud -->
+        <div class="col-md-6">
+            <div class="card-clinical h-100" style="background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);">
+                <div class="card-clinical-header">
+                    <h6 class="card-clinical-title text-success d-flex align-items-center gap-2">
+                        <i class="bi bi-heart-pulse-fill text-success fs-5"></i>
+                        Consejo de Bienestar del Día
+                    </h6>
+                </div>
+                <div class="card-clinical-body d-flex flex-column justify-content-between">
+                    <div>
+                        <blockquote class="blockquote font-clinical-control border-0 p-0 m-0 mb-3" style="font-size: 1.05rem; font-style: italic; line-height: 1.5; color: #15803d; font-weight: 500;">
+                            "@healthTip"
+                        </blockquote>
+                    </div>
+                    <div class="text-end pt-3 border-top" style="border-color: rgba(21, 128, 61, 0.1) !important;">
+                        <span class="text-success small fw-semibold"><i class="bi bi-check-all me-1"></i>Departamento de Medicina Preventiva</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Gráficos del Dashboard -->
+    <script>
+        $(document).ready(function () {
+            // Obtener datos inyectados del diccionario de C#
+            const especialidadesData = {
+                @foreach (var pair in Model.CitasPorEspecialidad)
+                {
+                    @Html.Raw($"\"{pair.Key}\": {pair.Value},")
+                }
+            };
+
+            const labels = Object.keys(especialidadesData);
+            const dataValues = Object.values(especialidadesData);
+
+            if (labels.length === 0) {
+                // Si no hay datos, ocultar canvas o mostrar mensaje amigable
+                $('#especialidadesChart').parent().html('<div class="text-center text-muted py-5"><i class="bi bi-pie-chart fs-1 text-secondary mb-3 d-block"></i>No hay suficientes citas agendadas para generar el gráfico.</div>');
+                return;
+            }
+
+            // Generar paleta de colores HSL armónica y profesional
+            const backgroundColors = labels.map((_, index) => {
+                const hue = (index * (360 / labels.length)) % 360;
+                return `hsla(${hue}, 70%, 60%, 0.75)`;
+            });
+
+            const borderColors = labels.map((_, index) => {
+                const hue = (index * (360 / labels.length)) % 360;
+                return `hsla(${hue}, 70%, 50%, 1)`;
+            });
+
+            // Configurar Chart.js
+            const ctx = document.getElementById('especialidadesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Número de Citas',
+                        data: dataValues,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Outfit', sans-serif",
+                                    size: 11
+                                },
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.raw + ' citas';
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        });
+    </script>
+}

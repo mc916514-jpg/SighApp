@@ -1,0 +1,56 @@
+@model IEnumerable<SighApp.Models.Paciente>
+@{
+    ViewData["Title"] = "Gestión de Pacientes";
+}
+
+<div class="container-fluid animate-fade-in">
+    <!-- Header de Módulo -->
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h1 class="h3 fw-bold text-dark mb-1">Pacientes</h1>
+            <p class="text-muted mb-0">Administración de expedientes clínicos y datos de filiación de los pacientes.</p>
+        </div>
+        <div class="col-auto">
+            <a asp-action="Create" class="btn btn-clinical-primary">
+                <i class="bi bi-person-plus-fill me-2"></i> Registrar Paciente
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros y Búsqueda -->
+    <div class="card-clinical mb-4">
+        <div class="card-clinical-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <label class="form-clinical-label">Búsqueda rápida</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 border-slate">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="pacienteSearch" class="form-control form-clinical-control border-start-0" placeholder="Escriba Cédula, Nombre, Apellido o Teléfono..." value="@ViewBag.Search">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end pt-md-4">
+                    <span class="text-muted fs-7">
+                        <i class="bi bi-info-circle me-1"></i> Búsqueda en tiempo real activa (AJAX)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de la Tabla AJAX -->
+    <div class="card-clinical">
+        <div class="card-clinical-header">
+            <h5 class="card-clinical-title">Listado de Expedientes</h5>
+            <span class="badge bg-primary rounded-pill" id="pacienteCount">@Model.Count() registrados</span>
+        </div>
+        <div class="table-responsive" id="pacienteTableContainer">
+            @await Html.PartialAsync("_PacienteTable", Model)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/modules/pacientes.js" asp-append-version="true"></script>
+}

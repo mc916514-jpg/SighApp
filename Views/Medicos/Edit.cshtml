@@ -1,0 +1,104 @@
+@model SighApp.Models.Medico
+@{
+    ViewData["Title"] = "Editar Médico";
+    var especialidades = ViewBag.Especialidades as IEnumerable<SighApp.Models.Especialidad> ?? new List<SighApp.Models.Especialidad>();
+}
+
+<div class="container-fluid animate-fade-in" style="max-width: 800px;">
+    <!-- Migas de Pan y Header -->
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">Editar Médico</h1>
+        <p class="text-muted">Actualice la ficha profesional y especialidad de atención.</p>
+    </div>
+
+    <!-- Formulario Clínico -->
+    <div class="card-clinical">
+        <div class="card-clinical-header">
+            <h5 class="card-clinical-title">Modificación de Perfil Profesional</h5>
+        </div>
+        <div class="card-clinical-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 border-0 py-2 mb-3" style="font-size: 0.9rem;"></div>
+                
+                <!-- Campos ocultos necesarios -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row g-3">
+                    <!-- Número de Licencia Médica (Cédula) -->
+                    <div class="col-md-6">
+                        <label asp-for="Cedula" class="form-clinical-label">Licencia / Registro Médico *</label>
+                        <input asp-for="Cedula" class="form-control form-clinical-control" />
+                        <span asp-validation-for="Cedula" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Especialidad -->
+                    <div class="col-md-6">
+                        <label asp-for="EspecialidadId" class="form-clinical-label">Especialidad de Atención *</label>
+                        <select asp-for="EspecialidadId" class="form-select form-clinical-control">
+                            <option value="">-- Seleccione Especialidad --</option>
+                            @foreach (var esp in especialidades)
+                            {
+                                <option value="@esp.Id" selected="@(Model.EspecialidadId == esp.Id ? "selected" : null)">@esp.Nombre</option>
+                            }
+                        </select>
+                        <span asp-validation-for="EspecialidadId" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Nombres -->
+                    <div class="col-md-6">
+                        <label asp-for="Nombre" class="form-clinical-label">Nombres *</label>
+                        <input asp-for="Nombre" class="form-control form-clinical-control" />
+                        <span asp-validation-for="Nombre" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Apellidos -->
+                    <div class="col-md-6">
+                        <label asp-for="Apellido" class="form-clinical-label">Apellidos *</label>
+                        <input asp-for="Apellido" class="form-control form-clinical-control" />
+                        <span asp-validation-for="Apellido" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Teléfono / Celular -->
+                    <div class="col-md-6">
+                        <label asp-for="Telefono" class="form-clinical-label">Teléfono / Celular *</label>
+                        <input asp-for="Telefono" class="form-control form-clinical-control" />
+                        <span asp-validation-for="Telefono" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Correo Electrónico -->
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-clinical-label">Correo Electrónico *</label>
+                        <input asp-for="Email" type="email" class="form-control form-clinical-control" />
+                        <span asp-validation-for="Email" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Activo -->
+                    <div class="col-md-12 py-2">
+                        <div class="form-check form-switch">
+                            <input asp-for="Activo" type="checkbox" class="form-check-input" style="cursor: pointer; width: 45px; height: 22px;" />
+                            <label asp-for="Activo" class="form-check-label ms-2 fw-semibold text-dark" style="cursor: pointer; padding-top: 2px;">
+                                Médico habilitado para recibir citas y consultas (Activo)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-clinical-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-clinical-primary">
+                        <i class="bi bi-check-circle me-1"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

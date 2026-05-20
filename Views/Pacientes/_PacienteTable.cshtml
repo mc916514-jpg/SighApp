@@ -1,0 +1,63 @@
+@model IEnumerable<SighApp.Models.Paciente>
+
+<table class="table-clinical">
+    <thead>
+        <tr>
+            <th>Cédula / DNI</th>
+            <th>Nombre Completo</th>
+            <th>F. Nacimiento (Edad)</th>
+            <th>Teléfono / Celular</th>
+            <th>Correo Electrónico</th>
+            <th class="text-end">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted py-5">
+                    <i class="bi bi-person-exclamation fs-1 d-block mb-3 text-secondary"></i>
+                    No se encontraron pacientes que coincidan con la búsqueda.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                // Calcular edad de manera precisa
+                int edad = DateTime.Today.Year - item.FechaNacimiento.Year;
+                if (item.FechaNacimiento.Date > DateTime.Today.AddYears(-edad)) edad--;
+
+                <tr id="row-paciente-@item.Id">
+                    <td class="fw-bold text-primary">@item.Cedula</td>
+                    <td>
+                        <span class="d-block fw-semibold text-dark">@item.Nombre @item.Apellido</span>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Sexo: @item.Genero</small>
+                    </td>
+                    <td>
+                        <span>@item.FechaNacimiento.ToString("dd/MM/yyyy")</span>
+                        <small class="badge bg-slate text-muted d-block text-start p-0 fw-semibold" style="font-size: 0.75rem;">(@edad años)</small>
+                    </td>
+                    <td>@item.Telefono</td>
+                    <td>@item.Email</td>
+                    <td class="text-end">
+                        <div class="d-inline-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Ver Historial Clínico">
+                                <i class="bi bi-file-medical"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar Filiación">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-paciente" data-id="@item.Id" data-name="@item.Nombre @item.Apellido" title="Eliminar del Sistema">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<span id="actualCountValue" style="display:none;">@Model.Count()</span>

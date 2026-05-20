@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SIGH (Salud Total)</title>
+    
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.min.css">
+    
+    <!-- Custom site.css -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SighApp.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div id="wrapper">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <a class="sidebar-logo" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-heart-pulse-fill text-danger fs-3"></i>
+                    <div>
+                        <span class="d-block fw-bold text-white lh-1">SIGH</span>
+                        <small class="text-muted fw-semibold" style="font-size: 0.7rem;">SALUD TOTAL</small>
+                    </div>
+                </a>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                    <a asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Pacientes" ? "active" : "")">
+                    <a asp-controller="Pacientes" asp-action="Index">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Pacientes</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Medicos" ? "active" : "")">
+                    <a asp-controller="Medicos" asp-action="Index">
+                        <i class="bi bi-person-badge-fill"></i>
+                        <span>Médicos</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Especialidades" ? "active" : "")">
+                    <a asp-controller="Especialidades" asp-action="Index">
+                        <i class="bi bi-tags-fill"></i>
+                        <span>Especialidades</span>
+                    </a>
+                </li>
+                <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Citas" ? "active" : "")">
+                    <a asp-controller="Citas" asp-action="Index">
+                        <i class="bi bi-calendar-event-fill"></i>
+                        <span>Citas Médicas</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer text-center">
+                <span class="d-block">SIGH v1.0.0</span>
+                <span class="text-xs">&copy; @DateTime.Now.Year - Salud Total</span>
+            </div>
+        </nav>
+        
+        <!-- Content Wrapper -->
+        <div id="content-wrapper">
+            <!-- Top Navbar -->
+            <header id="top-navbar">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-sm btn-outline-secondary d-md-none" id="sidebarCollapse">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <span class="fw-semibold text-muted d-none d-md-inline">
+                        <i class="bi bi-hospital text-primary me-2"></i>
+                        Clínica Privada “Salud Total”
+                    </span>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-sm-block">
+                        <span class="d-block fw-bold text-dark fs-7">Dr. Administrador</span>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Panel de Gestión SIGH</small>
+                    </div>
+                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">
+                        AD
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content Arena -->
+            <main id="main-content" role="main" class="pb-5">
+                <!-- Alertas del sistema -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm border-0 d-flex align-items-center gap-2 mb-4 animate-fade-in" role="alert">
+                        <i class="bi bi-check-circle-fill fs-5"></i>
+                        <div>
+                            @TempData["SuccessMessage"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm border-0 d-flex align-items-center gap-2 mb-4 animate-fade-in" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <div>
+                            @TempData["ErrorMessage"]
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.11.0/dist/sweetalert2.all.min.js"></script>
+    <!-- Chart.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom site.js -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

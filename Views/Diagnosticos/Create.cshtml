@@ -1,0 +1,207 @@
+@model SighApp.Models.Diagnostico
+@{
+    ViewData["Title"] = "Registrar Diagnóstico Clínico";
+}
+
+<div class="container-fluid animate-fade-in" style="max-width: 950px;">
+    <!-- Navegación de regreso -->
+    <div class="mb-4">
+        <a asp-controller="Citas" asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Volver a la agenda
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">Registrar Atención Médica</h1>
+        <p class="text-muted">Ingrese el diagnóstico clínico y añada las recetas médicas asociadas de forma transaccional.</p>
+    </div>
+
+    <!-- Ficha de la Consulta -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header">
+                    <h5 class="card-clinical-title">Resumen de Cita</h5>
+                </div>
+                <div class="card-clinical-body">
+                    <div class="mb-3">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">PACIENTE</span>
+                        <span class="text-dark fw-bold">@Model.NombrePaciente</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">MÉDICO</span>
+                        <span class="text-dark fw-semibold">Dr. @Model.NombreMedico</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">FECHA Y HORA ORIGINAL</span>
+                        <span class="text-dark">@Model.FechaCita.ToString("dd/MM/yyyy - hh:mm tt")</span>
+                    </div>
+                    <div class="mb-0">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">SÍNTOMA / MOTIVO DE CONSULTA</span>
+                        <p class="bg-light border p-2 rounded-3 text-secondary mt-1.5 mb-0" style="font-size: 0.85rem; line-height: 1.4;">
+                            @Model.MotivoCita
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header">
+                    <h5 class="card-clinical-title">Registro Clínico y Prescripción</h5>
+                </div>
+                <div class="card-clinical-body">
+                    <form asp-action="Create" method="post" id="diagnosticoForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 border-0 py-2 mb-3" style="font-size: 0.9rem;"></div>
+                        <input type="hidden" asp-for="CitaId" />
+
+                        <!-- Diagnóstico Clínico / Descripción -->
+                        <div class="mb-4">
+                            <label asp-for="Descripcion" class="form-clinical-label">Diagnóstico e Indicaciones Generales *</label>
+                            <textarea asp-for="Descripcion" rows="4" class="form-control form-clinical-control" placeholder="Escriba el diagnóstico detallado de la consulta, hallazgos, signos vitales y recomendaciones generales para el paciente..."></textarea>
+                            <span asp-validation-for="Descripcion" class="validation-error-msg"></span>
+                        </div>
+
+                        <!-- Sección Dinámica de Recetas / Tratamientos -->
+                        <div class="border-top pt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-1.5">
+                                    <i class="bi bi-prescription text-primary"></i>
+                                    Receta Médica / Medicación Recetada
+                                </h6>
+                                <button type="button" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" id="btnAddMedicamento">
+                                    <i class="bi bi-plus-circle"></i> Añadir Medicamento
+                                </button>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered border-light-subtle rounded-3 align-middle" id="tratamientosTable" style="font-size: 0.9rem;">
+                                    <thead class="bg-light text-secondary" style="font-size: 0.8rem; font-weight: bold; text-transform: uppercase;">
+                                        <tr>
+                                            <th>Medicamento / Fármaco *</th>
+                                            <th style="width: 130px;">Dosis *</th>
+                                            <th style="width: 140px;">Frecuencia *</th>
+                                            <th style="width: 130px;">Duración *</th>
+                                            <th class="text-center" style="width: 50px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tratamientosTableBody">
+                                        <!-- Primera fila por defecto -->
+                                        <tr class="tratamiento-row">
+                                            <td>
+                                                <input name="Tratamientos[0].Medicamento" class="form-control form-clinical-control" placeholder="Ej: Paracetamol 500mg" required />
+                                            </td>
+                                            <td>
+                                                <input name="Tratamientos[0].Dosis" class="form-control form-clinical-control" placeholder="Ej: 1 comp" required />
+                                            </td>
+                                            <td>
+                                                <input name="Tratamientos[0].Frecuencia" class="form-control form-clinical-control" placeholder="Ej: Cada 8 hs" required />
+                                            </td>
+                                            <td>
+                                                <input name="Tratamientos[0].Duracion" class="form-control form-clinical-control" placeholder="Ej: 5 días" required />
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row" disabled>
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                            <a asp-controller="Citas" asp-action="Index" class="btn btn-clinical-secondary">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-clinical-primary">
+                                <i class="bi bi-shield-check me-1"></i> Finalizar y Guardar Consulta
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function () {
+            // Contador de filas
+            let rowCount = 1;
+
+            // Función para reconstruir los índices de los inputs y que el binding del modelo de C# funcione a la perfección sin saltarse posiciones.
+            function reindexarFilas() {
+                const rows = $('.tratamiento-row');
+                
+                rows.each(function (index) {
+                    const row = $(this);
+                    
+                    // Modificar atributos de los inputs de esta fila
+                    row.find('input').each(function () {
+                        const input = $(this);
+                        const name = input.attr('name');
+                        if (name) {
+                            // Extraer el campo (Medicamento, Dosis, Frecuencia, Duracion)
+                            const property = name.substring(name.lastIndexOf('.') + 1);
+                            input.attr('name', `Tratamientos[${index}].${property}`);
+                        }
+                    });
+
+                    // Deshabilitar botón de remover si solo queda 1 fila
+                    const deleteBtn = row.find('.btn-remove-row');
+                    if (rows.length === 1) {
+                        deleteBtn.prop('disabled', true);
+                    } else {
+                        deleteBtn.prop('disabled', false);
+                    }
+                });
+
+                rowCount = rows.length;
+            }
+
+            // Añadir fila de medicamento
+            $('#btnAddMedicamento').on('click', function () {
+                const newRow = `
+                    <tr class="tratamiento-row animate-fade-in">
+                        <td>
+                            <input name="Tratamientos[${rowCount}].Medicamento" class="form-control form-clinical-control" placeholder="Ej: Ibuprofeno 400mg" required />
+                        </td>
+                        <td>
+                            <input name="Tratamientos[${rowCount}].Dosis" class="form-control form-clinical-control" placeholder="Ej: 1 tableta" required />
+                        </td>
+                        <td>
+                            <input name="Tratamientos[${rowCount}].Frecuencia" class="form-control form-clinical-control" placeholder="Ej: Cada 12 hs" required />
+                        </td>
+                        <td>
+                            <input name="Tratamientos[${rowCount}].Duracion" class="form-control form-clinical-control" placeholder="Ej: 3 días" required />
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                
+                $('#tratamientosTableBody').append(newRow);
+                reindexarFilas();
+            });
+
+            // Remover fila
+            $(document).on('click', '.btn-remove-row', function () {
+                const row = $(this).closest('.tratamiento-row');
+                
+                row.fadeOut(250, function () {
+                    row.remove();
+                    reindexarFilas();
+                });
+            });
+
+            // Reindexación inicial
+            reindexarFilas();
+        });
+    </script>
+}

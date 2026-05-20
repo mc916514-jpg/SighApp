@@ -1,0 +1,179 @@
+@model SighApp.Models.Cita
+@{
+    ViewData["Title"] = "Detalle de Cita Médica";
+    var diagnostico = ViewBag.Diagnostico as SighApp.Models.Diagnostico;
+    var tratamientos = ViewBag.Tratamientos as IEnumerable<SighApp.Models.Tratamiento> ?? new List<SighApp.Models.Tratamiento>();
+}
+
+<div class="container-fluid animate-fade-in" style="max-width: 900px;">
+    <!-- Navegación de regreso -->
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Volver a la agenda
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">Detalle de la Cita</h1>
+        <p class="text-muted">Estado clínico, información del paciente, médico y consultas registradas.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Ficha de Cita -->
+        <div class="col-md-5">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header">
+                    <h5 class="card-clinical-title">Información de Agenda</h5>
+                </div>
+                <div class="card-clinical-body">
+                    <div class="mb-4 text-center">
+                        <span class="text-muted d-block mb-1" style="font-size: 0.8rem; font-weight: 600;">ESTADO DE ATENCIÓN</span>
+                        @if (Model.Estado == "Pendiente")
+                        {
+                            <span class="badge-clinical badge-clinical-warning fs-6 px-3 py-2">
+                                <i class="bi bi-hourglass-split me-1"></i> Pendiente de Atención
+                            </span>
+                        }
+                        else if (Model.Estado == "Realizada")
+                        {
+                            <span class="badge-clinical badge-clinical-success fs-6 px-3 py-2">
+                                <i class="bi bi-check-circle-fill me-1"></i> Atendida / Realizada
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-clinical badge-clinical-danger fs-6 px-3 py-2">
+                                <i class="bi bi-x-circle-fill me-1"></i> Cancelada
+                            </span>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted d-block" style="font-size: 0.8rem; font-weight: 600;">FECHA Y HORA</span>
+                        <span class="text-dark fw-bold fs-5">
+                            <i class="bi bi-calendar2-event text-primary me-2"></i>
+                            @Model.FechaHora.ToString("dd/MM/yyyy - hh:mm tt")
+                        </span>
+                    </div>
+
+                    <div class="mb-3 border-top pt-3">
+                        <span class="text-muted d-block mb-1" style="font-size: 0.8rem; font-weight: 600;">PACIENTE</span>
+                        <span class="text-dark fw-semibold d-block">@Model.NombrePaciente</span>
+                        <small class="text-muted d-block">Cédula: @Model.CedulaPaciente</small>
+                    </div>
+
+                    <div class="mb-3 border-top pt-3">
+                        <span class="text-muted d-block mb-1" style="font-size: 0.8rem; font-weight: 600;">MÉDICO ASIGNADO</span>
+                        <span class="text-dark fw-semibold d-block">Dr. @Model.NombreMedico</span>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-2 py-0.5" style="font-size: 0.8rem;">
+                            @Model.NombreEspecialidad
+                        </span>
+                    </div>
+
+                    <div class="mb-3 border-top pt-3">
+                        <span class="text-muted d-block" style="font-size: 0.8rem; font-weight: 600;">MOTIVO DE CONSULTA</span>
+                        <p class="text-dark bg-light p-2.5 rounded-3 border mb-0" style="font-size: 0.9rem; line-height: 1.4;">
+                            @Model.Motivo
+                        </p>
+                    </div>
+
+                    @if (Model.Estado == "Pendiente")
+                    {
+                        <div class="mt-4 pt-3 border-top d-flex flex-column gap-2">
+                            <a asp-controller="Diagnosticos" asp-action="Create" asp-route-citaId="@Model.Id" class="btn btn-clinical-primary w-100">
+                                <i class="bi bi-journal-medical me-1"></i> Registrar Diagnóstico (Atender)
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-clinical-secondary w-100">
+                                <i class="bi bi-calendar2-range me-1"></i> Reprogramar Cita
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Ficha Clínica de Atención (Diagnóstico y Tratamiento) -->
+        <div class="col-md-7">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-clinical-title">Resultado de Atención Clínica</h5>
+                    <i class="bi bi-shield-lock text-muted fs-5" title="Datos confidenciales del paciente"></i>
+                </div>
+                <div class="card-clinical-body">
+                    @if (Model.Estado == "Pendiente")
+                    {
+                        <div class="text-center text-muted py-5 my-3">
+                            <i class="bi bi-clipboard2-pulse fs-1 d-block mb-3 text-secondary"></i>
+                            <h6 class="fw-bold">Consulta Médica Aún No Realizada</h6>
+                            <p class="small px-4 text-secondary mb-0">Una vez que el médico atienda al paciente y registre el diagnóstico, aquí se desplegará el informe clínico y la receta médica electrónica.</p>
+                        </div>
+                    }
+                    else if (Model.Estado == "Cancelada")
+                    {
+                        <div class="text-center text-muted py-5 my-3">
+                            <i class="bi bi-calendar-x-fill fs-1 d-block mb-3 text-danger opacity-75"></i>
+                            <h6 class="fw-bold text-danger">Esta cita fue cancelada</h6>
+                            <p class="small px-4 text-secondary mb-0">No se pueden ingresar diagnósticos ni recetas para citas en estado cancelado.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @if (diagnostico != null)
+                        {
+                            <div class="mb-4">
+                                <div class="p-3 bg-success-subtle text-success border border-success-subtle rounded-3 mb-4">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-check-circle-fill fs-5"></i>
+                                        <div>
+                                            <h6 class="fw-bold mb-0">Chequeo Clínico Guardado de forma Exitosa</h6>
+                                            <small class="opacity-75">Registrado el: @diagnostico.FechaDiagnostico.ToString("dd/MM/yyyy hh:mm tt")</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <span class="text-muted d-block" style="font-size: 0.8rem; font-weight: 600;">SÍNTOMAS / DIAGNÓSTICO</span>
+                                    <p class="text-dark fw-medium bg-light p-3 rounded-3 border" style="font-size: 0.95rem; line-height: 1.5; white-space: pre-line;">
+                                        @diagnostico.Descripcion
+                                    </p>
+                                </div>
+
+                                <hr class="text-muted opacity-25 my-4">
+
+                                <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                                    <i class="bi bi-prescription text-primary fs-5"></i>
+                                    Receta Médica Electrónica
+                                </h6>
+
+                                @if (!tratamientos.Any())
+                                {
+                                    <p class="text-muted small italic">No se prescribieron medicamentos ni tratamientos particulares en esta sesión.</p>
+                                }
+                                else
+                                {
+                                    <div class="list-group list-group-flush border rounded-3 overflow-hidden">
+                                        @foreach (var tr in tratamientos)
+                                        {
+                                            <div class="list-group-item p-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold text-primary fs-6">@tr.Medicamento</span>
+                                                    <span class="badge bg-secondary rounded-pill font-monospace" style="font-size: 0.8rem;">Dosis: @tr.Dosis</span>
+                                                </div>
+                                                <p class="text-muted small mb-0 mt-1.5"><i class="bi bi-info-circle me-1"></i><strong>Instrucciones:</strong> @tr.Frecuencia | <strong>Duración:</strong> @tr.Duracion</p>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center text-muted py-5 my-3">
+                                <i class="bi bi-exclamation-triangle-fill fs-1 d-block mb-3 text-warning"></i>
+                                <h6 class="fw-bold">Alerta de Inconsistencia</h6>
+                                <p class="small px-4 text-secondary mb-0">La cita figura como realizada, pero no se ha encontrado el diagnóstico en el servidor de base de datos.</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

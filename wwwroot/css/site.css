@@ -1,0 +1,376 @@
+/* --- Sistema Integral de Gestión Hospitalaria (SIGH) --- */
+/* --- CLINICA PRIVADA: SALUD TOTAL --- */
+
+:root {
+    --primary-color: #0d6efd; /* Azul clínico */
+    --primary-hover: #0b5ed7;
+    --secondary-color: #4f46e5; /* Indigo para acentos */
+    --success-color: #10b981; /* Verde esmeralda */
+    --warning-color: #f59e0b; /* Ambar */
+    --danger-color: #ef4444; /* Rojo suave */
+    --bg-main: #f8fafc; /* Gris muy claro ultra-premium */
+    --bg-sidebar: #0f172a; /* Azul pizarra oscuro elegante */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --card-shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --border-radius: 12px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* --- Layout Estructura (Sidebar + Contenedor de Contenido) --- */
+#wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+#sidebar {
+    min-width: 260px;
+    max-width: 260px;
+    background-color: var(--bg-sidebar);
+    color: #f8fafc;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+#sidebar .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#sidebar .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#sidebar .sidebar-menu {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+#sidebar .sidebar-menu li {
+    padding: 2px 16px;
+}
+
+#sidebar .sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#sidebar .sidebar-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+#sidebar .sidebar-menu li.active a {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+#sidebar .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+#content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+#top-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+}
+
+#main-content {
+    padding: 30px;
+    flex-grow: 1;
+}
+
+/* --- Componentes UI Elegantes --- */
+.card-clinical {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 24px;
+}
+
+.card-clinical:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.card-clinical-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    background-color: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-clinical-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 0;
+}
+
+.card-clinical-body {
+    padding: 24px;
+}
+
+/* --- Botones Clínicos Modernos --- */
+.btn-clinical-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    color: #ffffff;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.15);
+    transition: all 0.2s ease;
+}
+
+.btn-clinical-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(13, 110, 253, 0.25);
+    color: #ffffff;
+}
+
+.btn-clinical-secondary {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: var(--text-main);
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-clinical-secondary:hover {
+    background-color: #e2e8f0;
+    color: var(--text-main);
+}
+
+/* --- Widgets de Estadísticas del Dashboard --- */
+.stat-widget {
+    padding: 24px;
+    background: #ffffff;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all var(--transition-speed) ease;
+}
+
+.stat-widget:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.stat-widget-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-widget-info {
+    text-align: right;
+}
+
+.stat-widget-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.stat-widget-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* --- Colores de los iconos de los widgets --- */
+.icon-patients { background-color: rgba(13, 110, 253, 0.1); color: var(--primary-color); }
+.icon-doctors { background-color: rgba(79, 70, 229, 0.1); color: var(--secondary-color); }
+.icon-today { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+.icon-pending { background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+
+/* --- Tablas Clínicas Premium --- */
+.table-clinical {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-clinical th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.table-clinical td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.table-clinical tr:hover td {
+    background-color: #f8fafc;
+}
+
+/* --- Badges Clínicos --- */
+.badge-clinical {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.badge-clinical-success { background-color: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+.badge-clinical-warning { background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+.badge-clinical-danger { background-color: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+.badge-clinical-info { background-color: rgba(13, 110, 253, 0.1); color: var(--primary-color); }
+
+/* --- Formularios Clínicos --- */
+.form-clinical-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.form-clinical-control {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-clinical-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+    outline: none;
+}
+
+.validation-error-msg {
+    font-size: 0.8rem;
+    color: var(--danger-color);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* --- Animaciones de Carga y Micro-interacciones --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* --- Historial Clínico (Timeline) --- */
+.timeline-clinical {
+    position: relative;
+    padding-left: 30px;
+    border-left: 2px solid #e2e8f0;
+    margin-left: 10px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -37px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+.timeline-date {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.timeline-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.timeline-desc {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+}

@@ -1,0 +1,118 @@
+@model SighApp.Models.Diagnostico
+@{
+    ViewData["Title"] = "Detalle de Consulta Clínica";
+}
+
+<div class="container-fluid animate-fade-in" style="max-width: 850px;">
+    <!-- Navegación de regreso -->
+    <div class="mb-4">
+        <a asp-action="Historial" asp-route-pacienteId="@ViewBag.PacienteId" class="text-decoration-none text-muted mb-2 d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Volver al historial clínico
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">Detalle de Consulta Clínica</h1>
+        <p class="text-muted">Informe detallado y prescripciones médicas oficiales del centro de salud.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna Ficha de Cita -->
+        <div class="col-md-4">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header">
+                    <h5 class="card-clinical-title">Ficha de Sesión</h5>
+                </div>
+                <div class="card-clinical-body">
+                    <div class="mb-3">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">FECHA DE ATENCIÓN</span>
+                        <span class="text-dark fw-bold">
+                            <i class="bi bi-calendar2-check-fill text-success me-1"></i>
+                            @Model.FechaDiagnostico.ToString("dd/MM/yyyy - hh:mm tt")
+                        </span>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <div class="mb-3">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">PACIENTE</span>
+                        <span class="text-dark fw-semibold">@Model.NombrePaciente</span>
+                    </div>
+
+                    <div class="mb-3 border-top pt-2">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">MÉDICO ATENDENTE</span>
+                        <span class="text-dark fw-semibold">Dr. @Model.NombreMedico</span>
+                    </div>
+
+                    <div class="mb-0 border-top pt-2">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">FECHA ORIGINAL DE CITA</span>
+                        <span class="text-secondary small">@Model.FechaCita.ToString("dd/MM/yyyy - hh:mm tt")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna Ficha de Diagnóstico y Recetas -->
+        <div class="col-md-8">
+            <div class="card-clinical h-100">
+                <div class="card-clinical-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-clinical-title">Reporte Clínico y Receta Electrónica</h5>
+                    <button type="button" class="btn btn-sm btn-outline-secondary d-none d-sm-inline-flex align-items-center gap-1" onclick="window.print();" title="Imprimir Receta">
+                        <i class="bi bi-printer"></i> Imprimir
+                    </button>
+                </div>
+                <div class="card-clinical-body">
+                    <!-- Motivo inicial de la cita -->
+                    <div class="mb-4">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">SÍNTOMAS / MOTIVO CONSULTA INICIAL</span>
+                        <p class="text-secondary bg-light p-2.5 rounded-3 border mb-0" style="font-size: 0.88rem; line-height: 1.4;">
+                            @Model.MotivoCita
+                        </p>
+                    </div>
+
+                    <!-- Diagnóstico -->
+                    <div class="mb-4">
+                        <span class="text-muted d-block" style="font-size: 0.75rem; font-weight: 600;">DIAGNÓSTICO E INSTRUCCIONES</span>
+                        <div class="text-dark fw-medium bg-light p-3 rounded-3 border" style="font-size: 0.95rem; line-height: 1.5; white-space: pre-line;">
+                            @Model.Descripcion
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25 my-4">
+
+                    <!-- Medicamentos Recetados -->
+                    <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-prescription text-primary fs-5"></i>
+                        Medicamentos Prescritos
+                    </h6>
+
+                    @if (!Model.Tratamientos.Any())
+                    {
+                        <div class="p-3 text-center text-muted border rounded-3 bg-light" style="font-size: 0.88rem;">
+                            No se prescribieron medicamentos particulares en esta sesión.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush border rounded-3 overflow-hidden">
+                            @foreach (var tr in Model.Tratamientos)
+                            {
+                                <div class="list-group-item p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-primary fs-6">@tr.Medicamento</span>
+                                        <span class="badge bg-secondary rounded-pill font-monospace" style="font-size: 0.8rem;">Dosis: @tr.Dosis</span>
+                                    </div>
+                                    <div class="text-muted small mb-0 mt-2 row">
+                                        <div class="col-sm-6">
+                                            <strong>Frecuencia:</strong> @tr.Frecuencia
+                                        </div>
+                                        <div class="col-sm-6 text-sm-end">
+                                            <strong>Duración:</strong> @tr.Duracion
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

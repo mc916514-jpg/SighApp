@@ -1,0 +1,76 @@
+@model IEnumerable<SighApp.Models.Medico>
+
+<table class="table-clinical">
+    <thead>
+        <tr>
+            <th>Licencia Médica</th>
+            <th>Médico</th>
+            <th>Especialidad</th>
+            <th>Teléfono / Correo</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted py-5">
+                    <i class="bi bi-person-slash fs-1 d-block mb-3 text-secondary"></i>
+                    No se encontraron médicos con los filtros aplicados.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr id="row-medico-@item.Id">
+                    <td class="fw-bold text-secondary">@item.Cedula</td>
+                    <td>
+                        <span class="d-block fw-semibold text-dark">Dr. @item.Nombre @item.Apellido</span>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">ID Interno: #@item.Id</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 fw-bold" style="font-size: 0.8rem;">
+                            @item.NombreEspecialidad
+                        </span>
+                    </td>
+                    <td>
+                        <span class="d-block" style="font-size: 0.9rem;"><i class="bi bi-telephone text-muted me-1"></i> @item.Telefono</span>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;"><i class="bi bi-envelope text-muted me-1"></i> @item.Email</small>
+                    </td>
+                    <td>
+                        @if (item.Activo)
+                        {
+                            <span class="badge-clinical badge-clinical-success">
+                                <i class="bi bi-check-circle-fill"></i> Activo
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-clinical badge-clinical-danger">
+                                <i class="bi bi-x-circle-fill"></i> Inactivo
+                            </span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <div class="d-inline-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Ver Detalles">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Editar Ficha">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-medico" data-id="@item.Id" data-name="Dr. @item.Nombre @item.Apellido" title="Dar de Baja">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<span id="actualMedicoCountValue" style="display:none;">@Model.Count()</span>

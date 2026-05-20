@@ -1,0 +1,103 @@
+@model SighApp.Models.Paciente
+@{
+    ViewData["Title"] = "Registrar Nuevo Paciente";
+}
+
+<div class="container-fluid animate-fade-in" style="max-width: 800px;">
+    <!-- Migas de Pan y Header -->
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted mb-2 d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Volver al listado
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">Registrar Paciente</h1>
+        <p class="text-muted">Complete los datos de filiación obligatorios para dar de alta un expediente clínico.</p>
+    </div>
+
+    <!-- Formulario Clínico -->
+    <div class="card-clinical">
+        <div class="card-clinical-header">
+            <h5 class="card-clinical-title">Datos Personales e Información de Contacto</h5>
+        </div>
+        <div class="card-clinical-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 border-0 py-2 mb-3" style="font-size: 0.9rem;"></div>
+
+                <div class="row g-3">
+                    <!-- Cédula / DNI -->
+                    <div class="col-md-6">
+                        <label asp-for="Cedula" class="form-clinical-label">Cédula de Identidad / DNI *</label>
+                        <input asp-for="Cedula" class="form-control form-clinical-control" placeholder="Ej: 1029384756" />
+                        <span asp-validation-for="Cedula" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Género / Sexo -->
+                    <div class="col-md-6">
+                        <label asp-for="Genero" class="form-clinical-label">Género *</label>
+                        <select asp-for="Genero" class="form-select form-clinical-control">
+                            <option value="">-- Seleccione --</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro / No especificado</option>
+                        </select>
+                        <span asp-validation-for="Genero" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Nombres -->
+                    <div class="col-md-6">
+                        <label asp-for="Nombre" class="form-clinical-label">Nombres del Paciente *</label>
+                        <input asp-for="Nombre" class="form-control form-clinical-control" placeholder="Ej: Martín Andrés" />
+                        <span asp-validation-for="Nombre" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Apellidos -->
+                    <div class="col-md-6">
+                        <label asp-for="Apellido" class="form-clinical-label">Apellidos del Paciente *</label>
+                        <input asp-for="Apellido" class="form-control form-clinical-control" placeholder="Ej: Ramos" />
+                        <span asp-validation-for="Apellido" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Fecha de Nacimiento -->
+                    <div class="col-md-6">
+                        <label asp-for="FechaNacimiento" class="form-clinical-label">Fecha de Nacimiento *</label>
+                        <input asp-for="FechaNacimiento" type="date" class="form-control form-clinical-control" />
+                        <span asp-validation-for="FechaNacimiento" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Teléfono / Celular -->
+                    <div class="col-md-6">
+                        <label asp-for="Telefono" class="form-clinical-label">Teléfono / Celular *</label>
+                        <input asp-for="Telefono" class="form-control form-clinical-control" placeholder="Ej: 0987654321" />
+                        <span asp-validation-for="Telefono" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Correo Electrónico -->
+                    <div class="col-md-12">
+                        <label asp-for="Email" class="form-clinical-label">Correo Electrónico *</label>
+                        <input asp-for="Email" type="email" class="form-control form-clinical-control" placeholder="Ej: martin@gmail.com" />
+                        <span asp-validation-for="Email" class="validation-error-msg"></span>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="col-md-12">
+                        <label asp-for="Direccion" class="form-clinical-label">Dirección Domiciliaria</label>
+                        <textarea asp-for="Direccion" rows="2" class="form-control form-clinical-control" placeholder="Ej: Av. 10 de Agosto y Orellana, N32-15"></textarea>
+                        <span asp-validation-for="Direccion" class="validation-error-msg"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-clinical-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-clinical-primary">
+                        <i class="bi bi-save me-1"></i> Registrar Paciente
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

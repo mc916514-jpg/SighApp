@@ -1,0 +1,89 @@
+@model IEnumerable<SighApp.Models.Cita>
+
+<table class="table-clinical">
+    <thead>
+        <tr>
+            <th>Fecha y Hora</th>
+            <th>Paciente</th>
+            <th>Médico / Especialidad</th>
+            <th>Motivo de Consulta</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted py-5">
+                    <i class="bi bi-calendar-x fs-1 d-block mb-3 text-secondary"></i>
+                    No hay citas agendadas que coincidan con la búsqueda.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr id="row-cita-@item.Id">
+                    <td class="fw-bold text-dark">
+                        <span class="d-block">@item.FechaHora.ToString("dd/MM/yyyy")</span>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;"><i class="bi bi-clock me-1"></i>@item.FechaHora.ToString("hh:mm tt")</small>
+                    </td>
+                    <td>
+                        <span class="d-block fw-semibold text-dark">@item.NombrePaciente</span>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Cédula: @item.CedulaPaciente</small>
+                    </td>
+                    <td>
+                        <span class="d-block text-dark">Dr. @item.NombreMedico</span>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-0.5 fs-8">@item.NombreEspecialidad</span>
+                    </td>
+                    <td class="text-muted" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        @item.Motivo
+                    </td>
+                    <td>
+                        @if (item.Estado == "Pendiente")
+                        {
+                            <span class="badge-clinical badge-clinical-warning">
+                                <i class="bi bi-hourglass-split"></i> Pendiente
+                            </span>
+                        }
+                        else if (item.Estado == "Realizada")
+                        {
+                            <span class="badge-clinical badge-clinical-success">
+                                <i class="bi bi-check-circle-fill"></i> Realizada
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-clinical badge-clinical-danger">
+                                <i class="bi bi-x-circle-fill"></i> Cancelada
+                            </span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <div class="d-inline-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Ver Detalles">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            @if (item.Estado == "Pendiente")
+                            {
+                                <a asp-controller="Diagnosticos" asp-action="Create" asp-route-citaId="@item.Id" class="btn btn-sm btn-outline-success" title="Registrar Diagnóstico (Atender)">
+                                    <i class="bi bi-journal-medical"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary" title="Reprogramar Cita">
+                                    <i class="bi bi-calendar2-range"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-cancel-cita" data-id="@item.Id" data-patient="@item.NombrePaciente" title="Cancelar Cita">
+                                    <i class="bi bi-calendar-x"></i>
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<span id="actualCitaCountValue" style="display:none;">@Model.Count()</span>
