@@ -2,9 +2,9 @@
 /* --- CLINICA PRIVADA: SALUD TOTAL --- */
 
 :root {
-    --primary-color: #0d6efd; /* Azul clínico */
-    --primary-hover: #0b5ed7;
-    --secondary-color: #4f46e5; /* Indigo para acentos */
+    --primary-color: #1e3a8a; /* Navy blue */
+    --primary-hover: #1e40af;
+    --secondary-color: #1d4ed8; /* Navy blue acentos */
     --success-color: #10b981; /* Verde esmeralda */
     --warning-color: #f59e0b; /* Ambar */
     --danger-color: #ef4444; /* Rojo suave */

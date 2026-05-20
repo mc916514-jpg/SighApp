@@ -47,4 +47,58 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Auto-create database tables on startup if they don't exist
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var dbConnection = scope.ServiceProvider.GetRequiredService<SighApp.Data.SqlDatabaseConnection>();
+        using var conn = dbConnection.CreateConnection();
+        conn.Open();
+        
+        using var checkCmd = new Microsoft.Data.SqlClient.SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Pacientes'", conn);
+        int count = (int)checkCmd.ExecuteScalar();
+        if (count == 0)
+        {
+            var sqlPath = System.IO.Path.Combine(builder.Environment.ContentRootPath, "Data", "SighDatabase.sql");
+            if (System.IO.File.Exists(sqlPath))
+            {
+                var lines = System.IO.File.ReadAllLines(sqlPath);
+                var sqlBlocks = new System.Collections.Generic.List<string>();
+                var currentBlock = new System.Text.StringBuilder();
+                
+                // Skip first 18 lines to avoid creating database, just create tables
+                for (int i = 19; i < lines.Length; i++)
+                {
+                    var line = lines[i];
+                    if (line.Trim().Equals("GO", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sqlBlocks.Add(currentBlock.ToString());
+                        currentBlock.Clear();
+                    }
+                    else
+                    {
+                        currentBlock.AppendLine(line);
+                    }
+                }
+                if (currentBlock.Length > 0) sqlBlocks.Add(currentBlock.ToString());
+                
+                foreach (var block in sqlBlocks)
+                {
+                    if (!string.IsNullOrWhiteSpace(block))
+                    {
+                        using var cmd = new Microsoft.Data.SqlClient.SqlCommand(block, conn);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                Console.WriteLine("Base de datos inicializada correctamente con las tablas.");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error al inicializar la base de datos: " + ex.Message);
+    }
+}
+
 app.Run();
